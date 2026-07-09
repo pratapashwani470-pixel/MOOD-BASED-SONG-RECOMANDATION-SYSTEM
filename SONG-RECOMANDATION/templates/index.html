@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🎶 Mood Song Recommender</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      color: #fff;
+    }
+
+    .bg-image {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4');
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.25);
+      z-index: -1;
+    }
+
+    h2 {
+      color: #ffcc00;
+      text-shadow: 0 0 15px #ffcc00;
+      margin-top: 40px;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 15px #ffcc00; }
+      to { text-shadow: 0 0 30px #ff6600; }
+    }
+
+    input, select, button {
+      padding: 12px;
+      margin: 10px;
+      width: 300px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    input, select {
+      background: #f9f9f9;
+      color: #000;
+      outline: none;
+    }
+
+    button {
+      background: #ffcc00;
+      color: #000;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #ffcc00;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 18px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .song-line {
+      font-size: 20px;
+      margin: 8px auto;
+      padding: 10px;
+      width: 60%;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #222;
+      text-decoration: none;
+      border: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .song-line:hover {
+      transform: scale(1.05);
+      background: #fff;
+      color: #ff6600;
+      font-weight: bold;
+    }
+
+    .play-link {
+      margin-left: 10px;
+      color: #ff6600;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .play-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-image"></div>
+  <h2> Mood Song Recommender</h2>
+  <input type="text" id="text" placeholder="Type how you feel...">
+  
+  <!-- Expanded Dropdown for Indian Languages -->
+  <select id="language">
+  <option value="english">English</option>
+  <option value="hindi">Hindi</option>
+  <option value="punjabi">Punjabi</option>
+  <option value="tamil">Tamil</option>
+  <option value="bhojpuri">Bhojpuri</option>
+  <option value="bengali">Bengali</option>
+  <option value="gujarati">Gujarati</option>
+  <option value="marathi">Marathi</option>
+  <option value="telugu">Telugu</option>
+  <option value="kannada">Kannada</option>
+  </select>
+
+
+
+  <button onclick="getSongs()">Get Songs</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function getSongs() {
+      const text = document.getElementById("text").value;
+      const language = document.getElementById("language").value;
+
+      const response = await fetch("http://127.0.0.1:5000/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language, text })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        document.getElementById("result").innerHTML =
+          `<span style="color:#ff4444; font-weight:bold;">${data.error}</span>`;
+      } else {
+        document.getElementById("result").innerHTML =
+          `<b>Mood:</b> ${data.mood}<br><b>Songs:</b><br>` +
+          data.songs.map(song => {
+            const query = encodeURIComponent(song);
+            return `
+              <div class="song-line">
+                🎵 ${song}
+                <a href="https://www.youtube.com/results?search_query=${query}" target="_blank" class="play-link">▶ Play</a>
+              </div>`;
+          }).join("");
+      }
+    }
+  </script>
+</body>
+</html>
