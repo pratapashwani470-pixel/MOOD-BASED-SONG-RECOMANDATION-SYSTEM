@@ -3,6 +3,7 @@
     { "src": "SONG-RECOMMENDATION/app.py", "use": "@vercel/python" }
   ],
   "routes": [
+    { "src": "/recommend", "dest": "SONG-RECOMMENDATION/app.py" },
     { "src": "/(.*)", "dest": "SONG-RECOMMENDATION/app.py" }
   ]
 }
