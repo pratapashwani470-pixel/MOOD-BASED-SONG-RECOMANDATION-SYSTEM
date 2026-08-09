@@ -1,0 +1,5 @@
+{
+  "builds": [{ "src": "SONG-RECOMMENDATION/app.py", "use": "@vercel/python" }],
+  "routes": [{ "src": "/(.*)", "dest": "SONG-RECOMMENDATION/app.py" }]
+
+}
